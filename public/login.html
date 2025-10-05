@@ -1,90 +1,662 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1.0, user-scalable=no"
+        />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <title>Login</title>
+        <style>
+            :root {
+                --primary-color: #4a90e2;
+                --text-color: #ffffff;
+                --card-bg: rgba(255, 255, 255, 0.1);
+                --input-bg: rgba(255, 255, 255, 0.1);
+                --shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            }
 
-<head>
-    <base href="/">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="darkreader-lock">
-    <meta name="robots" content="noindex, nofollow" />
-    <style>
-        /* Put critical CSS here. The rest should go in stylesheets. */
-        body {
-            background-color: rgb(36, 36, 37);
-        }
-    </style>
-    <link rel="preload" as="style" href="style.css">
-    <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png" />
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="css/st-tailwind.css">
-    <link rel="stylesheet" type="text/css" href="css/login.css">
-    <link rel="manifest" crossorigin="use-credentials" href="manifest.json">
-    <link href="webfonts/NotoSans/stylesheet.css" rel="stylesheet">
-    <link href="webfonts/NotoSansMono/stylesheet.css" rel="stylesheet">
-    <!-- fontawesome webfonts-->
-    <link href="css/fontawesome.min.css" rel="stylesheet">
-    <link href="css/solid.min.css" rel="stylesheet">
-    <link href="css/user.css" rel="stylesheet">
-    <title>SillyTavern</title>
-</head>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-<body class="login">
-    <div id="shadow_popup" style="opacity: 0;">
-        <div id="dialogue_popup">
-            <div id="dialogue_popup_holder">
-                <div id="dialogue_popup_text">
-                    <div id="userSelectBlock" class="flex-container flexFlowColumn alignItemsCenter">
-                        <h2 id="logoBlock" class="flex-container">
-                            <img src="img/logo.png" alt="SillyTavern" class="logo">
-                            <span>Welcome to SillyTavern</span>
-                        </h2>
-                        <h3 id="normalLoginPrompt">
-                            Select an Account
-                        </h3>
-                        <h3 id="discreetLoginPrompt">
-                            Enter Login Details
-                        </h3>
-                        <div id="userListBlock" class="wide100p">
-                            <div id="userList" class="flex-container justifySpaceEvenly"></div>
-                            <div id="handleEntryBlock" style="display:none;" class="flex-container flexFlowColumn alignItemsCenter">
-                                <input id="userHandle" class="text_pole" type="text" placeholder="User handle" autocomplete="username">
-                            </div>
-                            <div id="passwordEntryBlock" style="display:none;"
-                                class="flex-container flexFlowColumn alignItemsCenter">
-                                <input id="userPassword" class="text_pole" type="password" placeholder="Password" autocomplete="current-password">
-                                <a id="recoverPassword" href="#" onclick="return false;">Forgot password?</a>
-                                <div class="flex-container">
-                                    <div id="loginButton" class="menu_button">Login</div>
-                                </div>
-                            </div>
-                            <div id="passwordRecoveryBlock" style="display:none;" class="flex-container flexFlowColumn alignItemsCenter">
-                                <div id="recoverMessage">
-                                    Recovery code has been posted to the server console.
-                                </div>
-                                <input id="recoveryCode" class="text_pole" type="text" placeholder="Recovery code">
-                                <input id="newPassword" class="text_pole" type="password" placeholder="New password" autocomplete="new-password">
-                                <div class="flex-container flexGap10">
-                                    <div id="sendRecovery" class="menu_button">Send</div>
-                                    <div id="cancelRecovery" class="menu_button">Cancel</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="neutral_warning" id="errorMessage">
-                        </div>
+            body {
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                position: relative;
+                background-color: #1a1a1a;
+                overflow: hidden;
+            }
+
+            .background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: url("img/background.jpg");
+                background-size: cover;
+                background-position: center;
+                filter: brightness(0.8);
+                z-index: 1;
+            }
+
+            .container {
+                position: relative;
+                z-index: 2;
+                min-height: 100vh;
+                display: flex;
+            }
+
+            .left-section {
+                flex: 1;
+            }
+
+            .right-section {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 2rem;
+            }
+
+            .login-card {
+                width: 100%;
+                max-width: 380px;
+                background: var(--card-bg);
+                padding: 2.5rem;
+                border-radius: 16px;
+                box-shadow: var(--shadow);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .logo-section {
+                text-align: center;
+                margin-bottom: 2.5rem;
+            }
+
+            .logo {
+                width: 72px;
+                height: auto;
+                margin-bottom: 1rem;
+            }
+
+            h1 {
+                color: var(--text-color);
+                font-size: 1.75rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+
+            .subtitle {
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 0.95rem;
+                margin-bottom: 2rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-group label {
+                display: block;
+                color: var(--text-color);
+                font-size: 0.9rem;
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 0.875rem 1rem;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 8px;
+                background: var(--input-bg);
+                font-size: 1rem;
+                color: var(--text-color);
+                transition: all 0.2s ease;
+            }
+
+            .form-input::placeholder {
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+            }
+
+            .submit-btn {
+                width: 100%;
+                padding: 0.875rem;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: transform 0.2s ease, background-color 0.2s ease;
+            }
+
+            .submit-btn:hover {
+                background: #357abd;
+                transform: translateY(-1px);
+            }
+
+            .submit-btn:active {
+                transform: translateY(0);
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    flex-direction: column;
+                }
+
+                .left-section {
+                    display: none;
+                }
+
+                .right-section {
+                    flex: 1;
+                    width: 100%;
+                    padding: 1.5rem;
+                }
+
+                .login-card {
+                    padding: 1.75rem;
+                }
+
+                .background {
+                    background-position: center 25%;
+                }
+            }
+
+            @supports (padding: max(0px)) {
+                .right-section {
+                    padding: max(2rem, env(safe-area-inset-top))
+                        max(2rem, env(safe-area-inset-right))
+                        max(2rem, env(safe-area-inset-bottom))
+                        max(2rem, env(safe-area-inset-left));
+                }
+            }
+
+            #shadow_popup {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+                display: none;
+            }
+
+            #userList {
+                margin-bottom: 20px;
+            }
+
+            .userSelect {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                margin: 5px 0;
+                cursor: pointer;
+                border-radius: 8px;
+                background: var(--input-bg);
+            }
+
+            .userSelect:hover {
+                background: var(--primary-color);
+            }
+
+            .avatar {
+                width: 40px;
+                height: 40px;
+                margin-right: 10px;
+            }
+
+            .avatar img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+            }
+
+            .userName {
+                color: var(--text-color);
+                margin-right: 10px;
+            }
+
+            .userHandle {
+                color: rgba(255, 255, 255, 0.6);
+            }
+
+            .user-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .user-card {
+                background: var(--input-bg);
+                border-radius: 12px;
+                padding: 1rem;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .user-card:hover {
+                background: var(--primary-color);
+                transform: translateY(-2px);
+            }
+
+            .user-avatar {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                margin: 0 auto 0.5rem;
+            }
+
+            .user-name {
+                color: var(--text-color);
+                font-size: 0.9rem;
+                margin: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .error-message {
+                color: #ff4444;
+                background-color: rgba(255, 68, 68, 0.1);
+                border: 1px solid #ff4444;
+                padding: 10px;
+                border-radius: 4px;
+                margin-bottom: 15px;
+                display: none;
+                text-align: center;
+            }
+
+            .toast-container {
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .toast {
+                background-color: rgba(255, 68, 68, 0.9);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                min-width: 300px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                animation: slideIn 0.3s ease-out;
+            }
+
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            .toast-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            input:disabled {
+                background-color: var(--input-bg);
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="background"></div>
+        <div id="shadow_popup" style="opacity: 0"></div>
+        <div class="container">
+            <div class="left-section"></div>
+            <div class="right-section">
+                <div class="login-card">
+                    <div class="logo-section">
+                        <img src="img/logo.png" alt="Logo" class="logo" />
+                        <h1>SillyTavern</h1>
+                        <p class="subtitle">Please sign in to continue</p>
                     </div>
+
+                    <!-- 登入表單 -->
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="userHandle">Username</label>
+                            <input
+                                type="text"
+                                id="userHandle"
+                                class="form-input"
+                                placeholder="Enter your username"
+                                autocomplete="username"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="userPassword">Password</label>
+                            <input
+                                type="password"
+                                id="userPassword"
+                                class="form-input"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            id="loginButton"
+                            class="submit-btn"
+                        >
+                            Sign In
+                        </button>
+                        <div
+                            class="form-group"
+                            style="text-align: center; margin-top: 1rem"
+                        >
+                            <a
+                                href="#"
+                                id="recoverPassword"
+                                style="
+                                    color: var(--text-color);
+                                    text-decoration: none;
+                                "
+                            >
+                                Forgot Password?
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- 密碼恢復區塊 -->
+                    <form id="passwordRecoveryBlock" style="display: none">
+                        <div class="form-group">
+                            <label for="userHandleRecovery">Username</label>
+                            <input
+                                type="text"
+                                id="userHandleRecovery"
+                                class="form-input"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="recoveryCode">Recovery Code</label>
+                            <input
+                                type="text"
+                                id="recoveryCode"
+                                class="form-input"
+                                placeholder="Enter recovery code"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input
+                                type="password"
+                                id="newPassword"
+                                class="form-input"
+                                placeholder="Enter new password"
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            id="sendRecovery"
+                            class="submit-btn"
+                        >
+                            Reset Password
+                        </button>
+                        <div
+                            class="form-group"
+                            style="text-align: center; margin-top: 1rem"
+                        >
+                            <a
+                                href="#"
+                                id="backToLogin"
+                                style="
+                                    color: var(--text-color);
+                                    text-decoration: none;
+                                "
+                            >
+                                Back to Login
+                            </a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="lib/jquery-3.5.1.min.js"></script>
-    <script src="scripts/login.js" type="module"></script>
-</body>
+        <div class="toast-container"></div>
 
-</html>
+        <script src="lib/jquery-3.5.1.min.js"></script>
+        <script type="module">
+            import { initAccessibility } from './scripts/a11y.js';
+            
+            let csrfToken = '';
+            let discreetLogin = false;
+
+            /**
+             * Gets a CSRF token from the server.
+             */
+            async function getCsrfToken() {
+                const response = await fetch('/csrf-token');
+                const data = await response.json();
+                return data.token;
+            }
+
+            /**
+             * Attempts to log in the user.
+             */
+            async function performLogin(handle, password) {
+                const userInfo = {
+                    handle: handle,
+                    password: password,
+                };
+
+                try {
+                    const response = await fetch('/api/users/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': csrfToken,
+                        },
+                        body: JSON.stringify(userInfo),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Login failed');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.handle) {
+                        console.log(`Successfully logged in as ${handle}!`);
+                        redirectToHome();
+                    }
+                } catch (error) {
+                    console.error('Error logging in:', error);
+                    throw error;
+                }
+            }
+
+            /**
+             * Requests a recovery code for the user.
+             */
+            async function sendRecoveryPart1(handle) {
+                const response = await fetch('/api/users/recover-step1', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken,
+                    },
+                    body: JSON.stringify({ handle }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    displayError(errorData.error || 'Recovery request failed');
+                    return true; // failed
+                }
+
+                $("#passwordRecoveryBlock").show();
+                return false; // success
+            }
+
+            /**
+             * Sets a new password for the user using the recovery code.
+             */
+            async function sendRecoveryPart2(handle, code, newPassword) {
+                const recoveryData = {
+                    handle,
+                    code,
+                    newPassword,
+                };
+
+                const response = await fetch('/api/users/recover-step2', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken,
+                    },
+                    body: JSON.stringify(recoveryData),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    displayError(errorData.error || 'Password recovery failed');
+                    return;
+                }
+
+                console.log(`Successfully recovered password for ${handle}!`);
+                await performLogin(handle, newPassword);
+            }
+
+            /**
+             * Redirects the user to the home page.
+             */
+            function redirectToHome() {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.delete('noauto');
+                currentUrl.pathname = '/';
+                window.location.href = currentUrl.toString();
+            }
+
+            // Initialize page
+            $(document).ready(async function () {
+                // Initialize CSRF token
+                try {
+                    csrfToken = await getCsrfToken();
+                } catch (error) {
+                    console.error('Failed to get CSRF token:', error);
+                    displayError('Failed to initialize. Please refresh the page.');
+                    return;
+                }
+
+                // Initialize accessibility
+                initAccessibility();
+                // 忘記密碼按鈕事件
+                $("#recoverPassword").click(async function (e) {
+                    e.preventDefault();
+                    const handle = $.trim($("#userHandle").val());
+
+                    if (handle === "") {
+                        displayError("請輸入使用者名稱");
+                        return;
+                    }
+
+                    $("#userHandleRecovery").val(handle);
+                    const failed = await sendRecoveryPart1(handle);
+                    if (!failed) {
+                        $('#loginForm').hide();
+                    }
+                });
+                
+
+                $('#sendRecovery').off('click').on('click', async () => {
+                    const handle = String($("#userHandle").val());
+                    const code = String($('#recoveryCode').val());
+                    const newPassword = String($('#newPassword').val());
+                    await sendRecoveryPart2(handle, code, newPassword);
+                });
+
+                // 返回登入按鈕事件
+                $("#backToLogin").click(function (e) {
+                    e.preventDefault();
+                    $("#passwordRecoveryBlock").hide();
+                    $("#loginForm").show();
+                });
+                
+
+                // 登入按鈕事件
+                $("#loginButton")
+                    .off("click")
+                    .on("click", async function () {
+                        const handle = $.trim($("#userHandle").val());
+                        const password = $.trim($("#userPassword").val());
+
+                        if (handle === "" && password === "") {
+                            displayError(
+                                "請確認使用者名稱與密碼正確"
+                            );
+                            return;
+                        }
+
+                        try {
+                            await performLogin(handle, password);
+                        } catch (error) {
+                            console.error("Login failed:", error);
+                            displayError(error.message);
+                        }
+                    });
+            });
+
+            function displayError(message) {
+                if (!message || message.trim() === "") {
+                    return;
+                }
+
+                const container = $(".toast-container");
+                const toast = $(`
+                <div class="toast">
+                    <div class="toast-content">
+                        <span class="toast-message">${message}</span>
+                        <span class="toast-close">&times;</span>
+                    </div>
+                </div>
+            `);
+
+                container.append(toast);
+
+                toast.find(".toast-close").click(() => {
+                    toast.remove();
+                });
+
+                // 增加顯示時間到 5 秒
+                setTimeout(() => {
+                    toast.fadeOut(() => toast.remove());
+                }, 1000);
+            }
+        </script>
